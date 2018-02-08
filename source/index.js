@@ -6,7 +6,7 @@ import { SubscriptionClient } from 'subscriptions-transport-ws'
 import { split } from 'apollo-link'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
-import WebSocket from 'ws'
+// import WebSocket from 'ws'
 
 // const uri = '10.0.0.21:83'
 
@@ -32,7 +32,7 @@ let client = {
                         // wasKeepAliveReceived: true,
                         timeout: 60000
                     },
-                    WebSocket
+                    WebSocket || require('ws').default
                 )
             ),
             link = split(

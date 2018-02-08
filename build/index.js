@@ -22,11 +22,9 @@ var _apolloLinkWs = require('apollo-link-ws');
 
 var _apolloUtilities = require('apollo-utilities');
 
-var _ws = require('ws');
-
-var _ws2 = _interopRequireDefault(_ws);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// import WebSocket from 'ws'
 
 // const uri = '10.0.0.21:83'
 
@@ -45,7 +43,7 @@ let client = {
             reconnect: true,
             // wasKeepAliveReceived: true,
             timeout: 60000
-        }, _ws2.default)),
+        }, WebSocket || require('ws').default)),
               link = (0, _apolloLink.split)(({ query }) => {
             const { kind, operation } = (0, _apolloUtilities.getMainDefinition)(query);
             return kind === 'OperationDefinition' && operation === 'subscription';
