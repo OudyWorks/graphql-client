@@ -42,18 +42,21 @@ let client = {
                 },
                 wsLink,
                 httpLink
-            )
-
-        Object.assign(
-            client,
-            new ApolloClient({
+            ),
+            apolloClient = new ApolloClient({
                 link,
                 cache: new InMemoryCache({
                     addTypename: false
                 }),
                 defaultOptions: options
             })
+
+        Object.assign(
+            client,
+            apolloClient
         )
+
+        client.__proto__ = apolloClient.__proto__
 
     }
 }

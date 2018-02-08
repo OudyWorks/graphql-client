@@ -39,15 +39,18 @@ let client = {
               link = (0, _apolloLink.split)(({ query }) => {
             const { kind, operation } = (0, _apolloUtilities.getMainDefinition)(query);
             return kind === 'OperationDefinition' && operation === 'subscription';
-        }, wsLink, httpLink);
-
-        Object.assign(client, new _apolloClient.ApolloClient({
+        }, wsLink, httpLink),
+              apolloClient = new _apolloClient.ApolloClient({
             link,
             cache: new _apolloCacheInmemory.InMemoryCache({
                 addTypename: false
             }),
             defaultOptions: options
-        }));
+        });
+
+        Object.assign(client, apolloClient);
+
+        client.__proto__ = apolloClient.__proto__;
     }
 };
 
