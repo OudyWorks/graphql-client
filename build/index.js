@@ -24,8 +24,6 @@ var _apolloUtilities = require('apollo-utilities');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import WebSocket from 'ws'
-
 // const uri = '10.0.0.21:83'
 
 let client = {
@@ -33,7 +31,7 @@ let client = {
         query: {
             fetchPolicy: 'network-only'
         }
-    }) {
+    }, WebSocket) {
 
         const httpLink = new _apolloLinkHttp.HttpLink({
             uri,
@@ -43,7 +41,7 @@ let client = {
             reconnect: true,
             // wasKeepAliveReceived: true,
             timeout: 60000
-        }, typeof WebSocket != 'undefined' ? WebSocket : require('ws'))),
+        }, WebSocket)),
               link = (0, _apolloLink.split)(({ query }) => {
             const { kind, operation } = (0, _apolloUtilities.getMainDefinition)(query);
             return kind === 'OperationDefinition' && operation === 'subscription';
