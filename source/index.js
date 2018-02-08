@@ -32,7 +32,7 @@ let client = {
                         // wasKeepAliveReceived: true,
                         timeout: 60000
                     },
-                    WebSocket || require('ws').default
+                    typeof WebSocket != 'undefined' ? WebSocket : require('ws')
                 )
             ),
             link = split(

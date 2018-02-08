@@ -43,7 +43,7 @@ let client = {
             reconnect: true,
             // wasKeepAliveReceived: true,
             timeout: 60000
-        }, WebSocket || require('ws').default)),
+        }, typeof WebSocket != 'undefined' ? WebSocket : require('ws'))),
               link = (0, _apolloLink.split)(({ query }) => {
             const { kind, operation } = (0, _apolloUtilities.getMainDefinition)(query);
             return kind === 'OperationDefinition' && operation === 'subscription';
