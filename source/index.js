@@ -1,6 +1,5 @@
 import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
-import fetch from 'node-fetch'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 import { split } from 'apollo-link'
@@ -11,13 +10,14 @@ import { getMainDefinition } from 'apollo-utilities'
 
 let client = {
     configure(
+        fetch,
+        WebSocket,
         uri,
         options = {
             query: {
                 fetchPolicy: 'network-only'
             }
-        },
-        WebSocket
+        }
     ) {
 
         const httpLink = new HttpLink({

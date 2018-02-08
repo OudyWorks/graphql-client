@@ -8,10 +8,6 @@ var _apolloClient = require('apollo-client');
 
 var _apolloLinkHttp = require('apollo-link-http');
 
-var _nodeFetch = require('node-fetch');
-
-var _nodeFetch2 = _interopRequireDefault(_nodeFetch);
-
 var _apolloCacheInmemory = require('apollo-cache-inmemory');
 
 var _subscriptionsTransportWs = require('subscriptions-transport-ws');
@@ -22,20 +18,18 @@ var _apolloLinkWs = require('apollo-link-ws');
 
 var _apolloUtilities = require('apollo-utilities');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 // const uri = '10.0.0.21:83'
 
 let client = {
-    configure(uri, options = {
+    configure(fetch, WebSocket, uri, options = {
         query: {
             fetchPolicy: 'network-only'
         }
-    }, WebSocket) {
+    }) {
 
         const httpLink = new _apolloLinkHttp.HttpLink({
             uri,
-            fetch: _nodeFetch2.default
+            fetch
         }),
               wsLink = new _apolloLinkWs.WebSocketLink(new _subscriptionsTransportWs.SubscriptionClient(uri.replace(/^http/, 'ws'), {
             reconnect: true,
