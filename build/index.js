@@ -31,11 +31,12 @@ let client = {
             uri,
             fetch
         }),
-              wsLink = new _apolloLinkWs.WebSocketLink(new _subscriptionsTransportWs.SubscriptionClient(uri.replace(/^http/, 'ws'), {
+              subscriptionClient = new _subscriptionsTransportWs.SubscriptionClient(uri.replace(/^http/, 'ws'), {
             reconnect: true,
             // wasKeepAliveReceived: true,
             timeout: 60000
-        }, WebSocket)),
+        }, WebSocket),
+              wsLink = new _apolloLinkWs.WebSocketLink(subscriptionClient),
               link = (0, _apolloLink.split)(({ query }) => {
             const { kind, operation } = (0, _apolloUtilities.getMainDefinition)(query);
             return kind === 'OperationDefinition' && operation === 'subscription';
@@ -51,6 +52,8 @@ let client = {
         Object.assign(client, apolloClient);
 
         client.__proto__ = apolloClient.__proto__;
+
+        client.subscriptionClient = subscriptionClient;
     }
 };
 

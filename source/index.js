@@ -24,16 +24,17 @@ let client = {
                 uri,
                 fetch
             }),
+            subscriptionClient = new SubscriptionClient(
+                uri.replace(/^http/, 'ws'),
+                {
+                    reconnect: true,
+                    // wasKeepAliveReceived: true,
+                    timeout: 60000
+                },
+                WebSocket
+            ),
             wsLink = new WebSocketLink(
-                new SubscriptionClient(
-                    uri.replace(/^http/, 'ws'),
-                    {
-                        reconnect: true,
-                        // wasKeepAliveReceived: true,
-                        timeout: 60000
-                    },
-                    WebSocket
-                )
+                subscriptionClient
             ),
             link = split(
                 ({ query }) => {
@@ -57,6 +58,8 @@ let client = {
         )
 
         client.__proto__ = apolloClient.__proto__
+
+        client.subscriptionClient = subscriptionClient
 
     }
 }
