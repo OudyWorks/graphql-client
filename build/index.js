@@ -27,33 +27,59 @@ let client = {
         }
     }) {
 
-        const httpLink = new _apolloLinkHttp.HttpLink({
-            uri,
-            fetch
-        }),
-              subscriptionClient = new _subscriptionsTransportWs.SubscriptionClient(uri.replace(/^http/, 'ws'), {
-            reconnect: true,
-            // wasKeepAliveReceived: true,
-            timeout: 60000
-        }, WebSocket),
-              wsLink = new _apolloLinkWs.WebSocketLink(subscriptionClient),
-              link = (0, _apolloLink.split)(({ query }) => {
-            const { kind, operation } = (0, _apolloUtilities.getMainDefinition)(query);
-            return kind === 'OperationDefinition' && operation === 'subscription';
-        }, wsLink, httpLink),
-              apolloClient = new _apolloClient.ApolloClient({
-            link,
-            cache: new _apolloCacheInmemory.InMemoryCache({
-                addTypename: false
+        fetch(uri, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `
+                        {
+                        __schema {
+                            types {
+                            kind
+                            name
+                            possibleTypes {
+                                name
+                            }
+                            }
+                        }
+                        }
+                    `
+            })
+        }).then(result => result.json()).then(result => {
+
+            result.data.__schema.types = result.data.__schema.types.filter(type => type.possibleTypes !== null);
+
+            const httpLink = new _apolloLinkHttp.HttpLink({
+                uri,
+                fetch
             }),
-            defaultOptions: options
+                  subscriptionClient = new _subscriptionsTransportWs.SubscriptionClient(uri.replace(/^http/, 'ws'), {
+                reconnect: true,
+                // wasKeepAliveReceived: true,
+                timeout: 60000
+            }, WebSocket),
+                  wsLink = new _apolloLinkWs.WebSocketLink(subscriptionClient),
+                  link = (0, _apolloLink.split)(({ query }) => {
+                const { kind, operation } = (0, _apolloUtilities.getMainDefinition)(query);
+                return kind === 'OperationDefinition' && operation === 'subscription';
+            }, wsLink, httpLink),
+                  apolloClient = new _apolloClient.ApolloClient({
+                link,
+                cache: new _apolloCacheInmemory.InMemoryCache({
+                    addTypename: false,
+                    fragmentMatcher: new _apolloCacheInmemory.IntrospectionFragmentMatcher({
+                        introspectionQueryResultData: result.data
+                    })
+                }),
+                defaultOptions: options
+            });
+
+            Object.assign(client, apolloClient);
+
+            client.__proto__ = apolloClient.__proto__;
+
+            client.subscriptionClient = subscriptionClient;
         });
-
-        Object.assign(client, apolloClient);
-
-        client.__proto__ = apolloClient.__proto__;
-
-        client.subscriptionClient = subscriptionClient;
     }
 };
 
