@@ -18,32 +18,33 @@ var _apolloLinkWs = require('apollo-link-ws');
 
 var _apolloUtilities = require('apollo-utilities');
 
-// const uri = '10.0.0.21:83'
-
 let client = {
     configure(fetch, WebSocket, uri, options = {
         query: {
-            fetchPolicy: 'network-only'
+            fetchPolicy: 'no-cache'
+        },
+        mutate: {
+            fetchPolicy: 'no-cache'
         }
     }) {
 
-        fetch(uri, {
+        return new Promise((resolve, reject) => fetch(uri, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 query: `
-                        {
-                        __schema {
-                            types {
-                            kind
-                            name
-                            possibleTypes {
+                            {
+                            __schema {
+                                types {
+                                kind
                                 name
+                                possibleTypes {
+                                    name
+                                }
+                                }
                             }
                             }
-                        }
-                        }
-                    `
+                        `
             })
         }).then(result => result.json()).then(result => {
 
@@ -79,7 +80,9 @@ let client = {
             client.__proto__ = apolloClient.__proto__;
 
             client.subscriptionClient = subscriptionClient;
-        });
+
+            resolve();
+        }).catch(reject));
     }
 };
 
