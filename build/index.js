@@ -65,7 +65,7 @@ let client = {
                 timeout: 60000
             }, WebSocket),
                   wsLink = new _apolloLinkWs.WebSocketLink(subscriptionClient),
-                  authLink = (0, _apolloLinkContext.setContext)((_, { headers }) => ({
+                  authLink = (0, _apolloLinkContext.setContext)((_, { headers = {} }) => ({
                 headers: Object.assign(headers, { authorization })
             })),
                   link = (0, _apolloLink.split)(({ query }) => {

@@ -75,7 +75,7 @@ let client = {
                         wsLink = new WebSocketLink(
                             subscriptionClient
                         ),
-                        authLink = setContext((_, { headers }) => ({
+                        authLink = setContext((_, { headers = {} }) => ({
                             headers: Object.assign(headers, {authorization})
                         })),
                         link = split(
