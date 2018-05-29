@@ -14,6 +14,8 @@ var _subscriptionsTransportWs = require('subscriptions-transport-ws');
 
 var _apolloLink = require('apollo-link');
 
+var _apolloLinkContext = require('apollo-link-context');
+
 var _apolloLinkWs = require('apollo-link-ws');
 
 var _apolloUtilities = require('apollo-utilities');
@@ -26,11 +28,14 @@ let client = {
         mutate: {
             fetchPolicy: 'no-cache'
         }
-    }) {
+    }, authorization = '') {
 
         return new Promise((resolve, reject) => fetch(uri, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authorization
+            },
             body: JSON.stringify({
                 query: `
                             {
@@ -60,12 +65,15 @@ let client = {
                 timeout: 60000
             }, WebSocket),
                   wsLink = new _apolloLinkWs.WebSocketLink(subscriptionClient),
+                  authLink = (0, _apolloLinkContext.setContext)((_, { headers }) => ({
+                headers: Object.assign(headers, { authorization })
+            })),
                   link = (0, _apolloLink.split)(({ query }) => {
                 const { kind, operation } = (0, _apolloUtilities.getMainDefinition)(query);
                 return kind === 'OperationDefinition' && operation === 'subscription';
             }, wsLink, httpLink),
                   apolloClient = new _apolloClient.ApolloClient({
-                link,
+                link: authLink.concat(link),
                 cache: new _apolloCacheInmemory.InMemoryCache({
                     addTypename: false,
                     fragmentMatcher: new _apolloCacheInmemory.IntrospectionFragmentMatcher({

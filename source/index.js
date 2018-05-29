@@ -3,6 +3,7 @@ import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 import { split } from 'apollo-link'
+import { setContext } from 'apollo-link-context'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 
@@ -18,7 +19,8 @@ let client = {
             mutate: {
                 fetchPolicy: 'no-cache'
             }
-        }
+        },
+        authorization = ''
     ) {
 
         return new Promise(
@@ -27,7 +29,10 @@ let client = {
                 uri,
                 {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': authorization
+                    },
                     body: JSON.stringify({
                         query: `
                             {
@@ -70,6 +75,9 @@ let client = {
                         wsLink = new WebSocketLink(
                             subscriptionClient
                         ),
+                        authLink = setContext((_, { headers }) => ({
+                            headers: Object.assign(headers, {authorization})
+                        })),
                         link = split(
                             ({ query }) => {
                                 const { kind, operation } = getMainDefinition(query)
@@ -79,7 +87,7 @@ let client = {
                             httpLink
                         ),
                         apolloClient = new ApolloClient({
-                            link,
+                            link: authLink.concat(link),
                             cache: new InMemoryCache({
                                 addTypename: false,
                                 fragmentMatcher: new IntrospectionFragmentMatcher({
