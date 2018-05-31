@@ -9,43 +9,34 @@ import { getMainDefinition } from 'apollo-utilities'
 
 let client = {
     configure(
-        fetch,
-        WebSocket,
         uri,
         options = {
-            query: {
-                fetchPolicy: 'no-cache'
+            defaultOptions: {
+                query: {
+                    fetchPolicy: 'no-cache'
+                },
+                mutate: {
+                    fetchPolicy: 'no-cache'
+                }
             },
-            mutate: {
-                fetchPolicy: 'no-cache'
-            }
-        },
-        authorization = ''
+            fetch,
+            WebSocket,
+            authorization: ''
+        }
     ) {
 
-        class WS extends WebSocket {
-            constructor(address, protocols, options) {
-                super(
-                    address,
-                    protocols,
-                    {
-                        headers: {
-                            authorization
-                        }
-                    }
-                )
-            }
-        }
+        let F = options.fetch || window.fetch
+        let W = options.WebSocket || window.WebSocket
 
         return new Promise(
             (resolve, reject) =>
-            fetch(
+            F(
                 uri,
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': authorization
+                        'Authorization': options.authorization
                     },
                     body: JSON.stringify({
                         query: `
@@ -55,7 +46,7 @@ let client = {
                                 kind
                                 name
                                 possibleTypes {
-                                  name
+                                    name
                                 }
                               }
                             }
@@ -75,7 +66,7 @@ let client = {
     
                     const httpLink = new HttpLink({
                             uri,
-                            fetch
+                            fetch: F
                         }),
                         subscriptionClient = new SubscriptionClient(
                             uri.replace(/^http/, 'ws'),
@@ -84,13 +75,18 @@ let client = {
                                 // wasKeepAliveReceived: true,
                                 timeout: 60000
                             },
-                            WS
+                            W
                         ),
                         wsLink = new WebSocketLink(
                             subscriptionClient
                         ),
                         authLink = setContext((_, { headers = {} }) => ({
-                            headers: Object.assign(headers, {authorization})
+                            headers: Object.assign(
+                                headers,
+                                {
+                                    authorization: options.authorization
+                                }
+                            )
                         })),
                         link = split(
                             ({ query }) => {
@@ -108,20 +104,20 @@ let client = {
                                     introspectionQueryResultData: result.data
                                 })
                             }),
-                            defaultOptions: options
+                            defaultOptions: options.defaultOptions
                         })
     
                     Object.assign(
-                        client,
+                        this,
                         apolloClient
                     )
     
-                    client.__proto__ = apolloClient.__proto__
+                    this.__proto__ = apolloClient.__proto__
     
-                    client.subscriptionClient = subscriptionClient
+                    this.subscriptionClient = subscriptionClient
 
                     // temp solution to disable subscription cache
-                    client.store.markSubscriptionResult = function() {}
+                    this.store.markSubscriptionResult = function() {}
 
                     resolve()
     
