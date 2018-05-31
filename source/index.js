@@ -23,6 +23,20 @@ let client = {
         authorization = ''
     ) {
 
+        class WS extends WebSocket {
+            constructor(address, protocols, options) {
+                super(
+                    address,
+                    protocols,
+                    {
+                        headers: {
+                            authorization
+                        }
+                    }
+                )
+            }
+        }
+
         return new Promise(
             (resolve, reject) =>
             fetch(
@@ -35,17 +49,17 @@ let client = {
                     },
                     body: JSON.stringify({
                         query: `
-                            {
+                        {
                             __schema {
-                                types {
+                              types {
                                 kind
                                 name
                                 possibleTypes {
-                                    name
+                                  name
                                 }
-                                }
+                              }
                             }
-                            }
+                        }                          
                         `
                     })
                 }
@@ -70,7 +84,7 @@ let client = {
                                 // wasKeepAliveReceived: true,
                                 timeout: 60000
                             },
-                            WebSocket
+                            WS
                         ),
                         wsLink = new WebSocketLink(
                             subscriptionClient
@@ -105,6 +119,9 @@ let client = {
                     client.__proto__ = apolloClient.__proto__
     
                     client.subscriptionClient = subscriptionClient
+
+                    // temp solution to disable subscription cache
+                    client.store.markSubscriptionResult = function() {}
 
                     resolve()
     

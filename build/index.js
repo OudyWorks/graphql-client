@@ -30,6 +30,16 @@ let client = {
         }
     }, authorization = '') {
 
+        class WS extends WebSocket {
+            constructor(address, protocols, options) {
+                super(address, protocols, {
+                    headers: {
+                        authorization
+                    }
+                });
+            }
+        }
+
         return new Promise((resolve, reject) => fetch(uri, {
             method: 'POST',
             headers: {
@@ -38,17 +48,17 @@ let client = {
             },
             body: JSON.stringify({
                 query: `
-                            {
+                        {
                             __schema {
-                                types {
+                              types {
                                 kind
                                 name
                                 possibleTypes {
-                                    name
+                                  name
                                 }
-                                }
+                              }
                             }
-                            }
+                        }                          
                         `
             })
         }).then(result => result.json()).then(result => {
@@ -63,7 +73,7 @@ let client = {
                 reconnect: true,
                 // wasKeepAliveReceived: true,
                 timeout: 60000
-            }, WebSocket),
+            }, WS),
                   wsLink = new _apolloLinkWs.WebSocketLink(subscriptionClient),
                   authLink = (0, _apolloLinkContext.setContext)((_, { headers = {} }) => ({
                 headers: Object.assign(headers, { authorization })
@@ -88,6 +98,9 @@ let client = {
             client.__proto__ = apolloClient.__proto__;
 
             client.subscriptionClient = subscriptionClient;
+
+            // temp solution to disable subscription cache
+            client.store.markSubscriptionResult = function () {};
 
             resolve();
         }).catch(reject));
