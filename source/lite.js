@@ -9,7 +9,7 @@ let client = {
             authorization: ''
         }
     ) {
-        this.uri = options.uri
+        this.uri = uri
         this.fetch = options.fetch || window.fetch
         this.authorization = options.authorization
     },
