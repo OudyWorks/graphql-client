@@ -1,4 +1,4 @@
-export default client = {
+let client = {
     uri: null,
     fetch: null,
     authorization: undefined,
@@ -39,3 +39,5 @@ export default client = {
         return this.request(mutation, variables)
     }
 }
+
+export default client
