@@ -1,4 +1,4 @@
-import liteClient from './index'
+import liteClient from './lite'
 import fetch from 'node-fetch'
 
 let liteNodeClient = Object.assign({}, liteClient)
