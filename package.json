@@ -1,6 +1,6 @@
 {
   "name": "@oudyworks/graphql-client",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "",
   "main": "build/index.js",
   "scripts": {
@@ -17,16 +17,17 @@
   },
   "homepage": "https://github.com/OudyWorks/graphql-client#readme",
   "dependencies": {
-    "apollo-cache-inmemory": "^1.2.2",
-    "apollo-client": "^2.3.2",
+    "apollo-cache-inmemory": "^1.2.4",
+    "apollo-client": "^2.3.4",
     "apollo-link": "^1.2.2",
+    "apollo-link-batch-http": "^1.2.2",
     "apollo-link-context": "^1.0.8",
     "apollo-link-http": "^1.5.4",
     "apollo-link-ws": "^1.0.8",
-    "apollo-utilities": "^1.0.13",
+    "apollo-utilities": "^1.0.15",
     "graphql": "^0.12.3",
     "node-fetch": "^1.7.3",
-    "subscriptions-transport-ws": "^0.9.9",
+    "subscriptions-transport-ws": "^0.9.11",
     "ws": "^3.3.3"
   },
   "devDependencies": {

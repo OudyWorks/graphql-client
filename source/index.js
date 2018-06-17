@@ -1,5 +1,6 @@
 import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
+import { BatchHttpLink } from 'apollo-link-batch-http'
 import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 import { split } from 'apollo-link'
@@ -64,7 +65,7 @@ let client = {
                         type => type.possibleTypes !== null
                     )
     
-                    const httpLink = new HttpLink({
+                    const httpLink = new BatchHttpLink({
                             uri,
                             fetch: F
                         }),
