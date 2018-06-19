@@ -29,7 +29,7 @@ let client = {
                                 responses.map(
                                     (response, i) => {
                                         if(response.errors)
-                                            requests[i].reject(errors)
+                                            requests[i].reject(response.errors)
                                         else
                                             requests[i].resolve(response)
                                     }
@@ -61,7 +61,7 @@ let client = {
                 ).then(
                     response => {
                         if(response.errors)
-                            reject(errors)
+                            reject(response.errors)
                         else
                             resolve(response)
                     }
