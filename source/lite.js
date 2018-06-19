@@ -23,7 +23,7 @@ let client = {
             this.purge = debounce(
                 () => {
                     do {
-                        let requests = this.queue.splice(0, batchMax || 10)
+                        let requests = this.queue.splice(0, this.batch.batchMax || 10)
                         this.request(requests.map(request => ({query: request.query, variables: request.variables}))).then(
                             (responses) =>
                                 responses.map(
