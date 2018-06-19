@@ -5,7 +5,7 @@ let liteNodeClient = Object.assign({}, liteClient)
 
 liteNodeClient.configure = function(
         uri,
-        {authorization = '', batch: undefined}
+        {authorization = '', batch = undefined}
     ) {
         return liteClient.configure.bind(this)(
             uri,
