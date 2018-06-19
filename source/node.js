@@ -29,7 +29,8 @@ let nodeClient = {
                     fetchPolicy: 'no-cache'
                 }
             },
-            authorization = ''
+            authorization = '',
+            batch = undefined
         }
     ) {
         return client.configure.bind(this)(
@@ -37,6 +38,7 @@ let nodeClient = {
             {
                 defaultOptions,
                 authorization,
+                batch,
                 fetch,
                 WebSocket: WebSocket(authorization)
             }

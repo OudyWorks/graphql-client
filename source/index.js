@@ -22,7 +22,8 @@ let client = {
             },
             fetch,
             WebSocket,
-            authorization: ''
+            authorization: '',
+            batch: undefined
         }
     ) {
 
@@ -65,10 +66,13 @@ let client = {
                         type => type.possibleTypes !== null
                     )
     
-                    const httpLink = new BatchHttpLink({
-                            uri,
-                            fetch: F
-                        }),
+                    const httpLink = new (batch ? BatchHttpLink : HttpLink)(Object.assign(
+                            {
+                                uri,
+                                fetch: F
+                            },
+                            batch || {}
+                        )),
                         subscriptionClient = new SubscriptionClient(
                             uri.replace(/^http/, 'ws'),
                             {
