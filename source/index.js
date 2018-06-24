@@ -66,12 +66,12 @@ let client = {
                         type => type.possibleTypes !== null
                     )
     
-                    const httpLink = new (batch ? BatchHttpLink : HttpLink)(Object.assign(
+                    const httpLink = new (options.batch ? BatchHttpLink : HttpLink)(Object.assign(
                             {
                                 uri,
                                 fetch: F
                             },
-                            batch || {}
+                            options.batch || {}
                         )),
                         subscriptionClient = new SubscriptionClient(
                             uri.replace(/^http/, 'ws'),
