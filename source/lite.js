@@ -43,7 +43,7 @@ let client = {
     },
     request(body) {
         return new Promise(
-            resolve => {
+            (resolve, reject) => {
                 this.fetch(
                     this.uri,
                     {
@@ -65,7 +65,7 @@ let client = {
                         else
                             resolve(response)
                     }
-                )
+                ).catch(reject)
             }
         )
     },
