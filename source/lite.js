@@ -1,4 +1,4 @@
-import debounce from 'lodash.debounce'
+import throttle from 'lodash.throttle'
 
 let client = {
     uri: null,
@@ -20,7 +20,7 @@ let client = {
         if(this.batch) {
             if(this.batch === true)
                 this.batch = {}
-            this.purge = debounce(
+            this.purge = throttle(
                 () => {
                     do {
                         let requests = this.queue.splice(0, this.batch.batchMax || 10)
