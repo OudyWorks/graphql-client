@@ -22,8 +22,9 @@ let client = {
                 this.batch = {}
             this.purge = throttle(
                 () => {
+                    let queue = this.queue.splice(0, this.queue.length)
                     do {
-                        let requests = this.queue.splice(0, this.batch.batchMax || 10)
+                        let requests = queue.splice(0, this.batch.batchMax || 10)
                         this.request(requests.map(request => ({query: request.query, variables: request.variables}))).then(
                             (responses) =>
                                 responses.map(
@@ -35,7 +36,7 @@ let client = {
                                     }
                                 )
                         )
-                    } while(this.queue.length)
+                    } while(queue.length)
                 },
                 this.batch.batchInterval || 10
             )
