@@ -35,6 +35,12 @@ let client = {
                                             requests[i].resolve(response)
                                     }
                                 )
+                        ).catch(
+                            error =>
+                                requests.map(
+                                    ({reject}) =>
+                                        reject(error)
+                                )
                         )
                     } while(queue.length)
                 },
